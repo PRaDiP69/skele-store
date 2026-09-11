@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png", // <--- UPDATED THIS LINE FROM .jpg TO .png
         width: 1200,
         height: 630,
         alt: "SKELE Editorial - Drop 001",
@@ -24,6 +24,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SKELE // Drop 001",
     description: "Stripping back conventional style to highlight pieces that resonate with low-profile noise.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.png"], // <--- UPDATED THIS LINE FROM .jpg TO .png
   },
 };
