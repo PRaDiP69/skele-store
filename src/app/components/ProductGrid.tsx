@@ -17,7 +17,9 @@ const PRODUCTS: ProductDetailItem[] = [
     color: "Blood Crimson",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/red-flag.png",
+    inStock: true, // <--- ADD THIS LINE
   },
+
   {
     id: "prod-hooked",
     name: "Hooked",
@@ -27,6 +29,7 @@ const PRODUCTS: ProductDetailItem[] = [
     color: "Onyx Black",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/Hooked.png",
+    inStock: true, // <--- ADD THIS LINE
   },
   {
     id: "prod-done-playing-blue",
@@ -37,6 +40,7 @@ const PRODUCTS: ProductDetailItem[] = [
     color: "Cobalt Blue",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/done-playing-blue.png",
+    inStock: true, // <--- ADD THIS LINE
   },
   {
     id: "prod-ulterior-motive-green",
@@ -47,6 +51,7 @@ const PRODUCTS: ProductDetailItem[] = [
     color: "Forest Green",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/Ulterior-motive-green.png",
+    inStock: true, // <--- ADD THIS LINE
   },
   {
     id: "prod-transcend",
@@ -57,6 +62,7 @@ const PRODUCTS: ProductDetailItem[] = [
     color: "Acid Stone",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/transcend.png",
+    soldOutSizes: ["XL"],
   },
   {
     id: "prod-disaster-black",
@@ -67,6 +73,7 @@ const PRODUCTS: ProductDetailItem[] = [
     color: "Washed Black",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/disaster-black.png",
+    inStock: false,
   },
 ];
 
@@ -137,7 +144,9 @@ export default function ProductGrid() {
                     unoptimized
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    
                   />
+                  
                 ) : (
                   <span className="text-zinc-700 font-bold uppercase tracking-widest text-xs text-center">
                     [ {product.name} ]
@@ -151,6 +160,31 @@ export default function ProductGrid() {
                 <span className="absolute bottom-3 right-3 z-10 p-1.5 bg-black/70 border border-zinc-800 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Maximize2 className="w-3.5 h-3.5" />
                 </span>
+            <div className="...">
+  <Image
+    src={product.image}
+    alt={product.name}
+    fill
+    className={`object-cover transition-transform duration-500 group-hover:scale-105 ${
+      product.inStock === false ? "grayscale opacity-40" : ""
+    }`}
+  />
+
+  {/* YOUR EXISTING SPAN TAG - KEEP AS IS */}
+  <span className="...">
+    {product.tag}
+  </span>
+
+  {/* NEW: ARCHIVED / SOLD OUT OVERLAY */}
+  {product.inStock === false && (
+    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">
+      <span className="border border-white/40 px-3 py-1 text-[10px] font-mono tracking-widest uppercase text-white bg-black">
+        [ ARCHIVE // SOLD OUT ]
+      </span>
+    </div>
+  )}
+</div>
+          
               </div>
 
               <div className="flex justify-between items-start">
@@ -174,6 +208,7 @@ export default function ProductGrid() {
                   const isSelected = selectedSizes[product.id] === size;
                   return (
                     <button
+                    
                       key={size}
                       onClick={() => handleSelectSize(product.id, size)}
                       className={`px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase transition-colors border ${
@@ -183,17 +218,23 @@ export default function ProductGrid() {
                       }`}
                     >
                       {size}
+                      
                     </button>
                   );
                 })}
               </div>
 
-              <button
-                onClick={() => handleAddToCart(product)}
-                className="w-full py-2.5 bg-zinc-100 hover:bg-white text-black text-[11px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                Add To Bag
-              </button>
+             <button
+  disabled={product.inStock === false}
+  onClick={() => handleAddToCart(product)}
+  className={`w-full py-2.5 text-xs font-mono tracking-widest uppercase transition-all ${
+    product.inStock === false
+      ? "bg-neutral-900 text-neutral-600 border border-neutral-800 cursor-not-allowed"
+      : "bg-white text-black hover:bg-neutral-200 cursor-pointer"
+  }`}
+>
+  {product.inStock === false ? "VAULTED // SOLD OUT" : "ACQUIRE // QUICK ADD"}
+</button>
             </div>
           </motion.div>
         ))}
