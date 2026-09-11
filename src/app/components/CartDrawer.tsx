@@ -20,24 +20,25 @@ export default function CartDrawer() {
     <>
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 overflow-hidden">
+          <div className="fixed inset-0 z-999 overflow-hidden">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeCart}
-              className="absolute inset-0 bg-black/70 backdrop-blur-xs"
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             />
 
             {/* Drawer */}
-            <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            {/* Drawer */}
+            <div className="fixed inset-y-0 right-0 max-w-full flex pl-10 z-[1000]">
               <motion.div
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="w-screen max-w-md bg-zinc-950 border-l border-zinc-800 flex flex-col"
+                className="w-screen max-w-md h-full bg-zinc-950 border-l border-zinc-800 flex flex-col pointer-events-auto"
               >
                 {/* Header */}
                 <div className="p-6 border-b border-zinc-800 flex items-center justify-between">

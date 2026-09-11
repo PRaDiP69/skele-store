@@ -44,10 +44,13 @@ export default function Navbar() {
 
         {/* Cart Trigger */}
         <button
-          onClick={openCart}
-          className="relative p-2 text-zinc-300 hover:text-white transition-colors cursor-pointer"
-          aria-label="Open Cart"
-        >
+  onClick={() => {
+    console.log("Cart button clicked!");
+    openCart();
+  }}
+  className="relative p-2 text-zinc-300 hover:text-white transition-colors cursor-pointer"
+  aria-label="Open Cart"
+>
           <ShoppingBag className="w-5 h-5" />
           {cartCount > 0 && (
             <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white text-black text-[10px] font-bold flex items-center justify-center">

@@ -31,7 +31,7 @@ export default function ProductDetailModal({
   isOpen,
   onClose,
 }: ProductDetailModalProps) {
-  const { addToCart } = useCart();
+  const { addToCart, openCart } = useCart();
   const [selectedSize, setSelectedSize] = useState<string>("M");
   const [addedNotice, setAddedNotice] = useState(false);
 
