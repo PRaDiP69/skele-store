@@ -1,3 +1,12 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Maximize2 } from "lucide-react";
+import { useCart } from "../context/CartContext";
+import ProductDetailModal, { ProductDetailItem } from "./ProductDetailModal";
+
 const PRODUCTS: ProductDetailItem[] = [
   {
     id: "prod-red-flag",
@@ -60,3 +69,141 @@ const PRODUCTS: ProductDetailItem[] = [
     image: "/products/disaster-black.png",
   },
 ];
+
+export default function ProductGrid() {
+  const { addToCart } = useCart();
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({
+    "prod-red-flag": "M",
+    "prod-hooked": "M",
+    "prod-done-playing-blue": "M",
+    "prod-ulterior-motive-green": "M",
+    "prod-transcend": "M",
+    "prod-disaster-black": "M",
+  });
+
+  const [inspectProduct, setInspectProduct] = useState<ProductDetailItem | null>(null);
+
+  const handleSelectSize = (productId: string, size: string) => {
+    setSelectedSizes((prev) => ({ ...prev, [productId]: size }));
+  };
+
+  const handleAddToCart = (product: ProductDetailItem) => {
+    const chosenSize = selectedSizes[product.id] || product.sizes[0];
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      size: chosenSize,
+      image: product.image,
+    });
+  };
+
+  return (
+    <section id="drops" className="py-24 px-6 max-w-7xl mx-auto border-t border-zinc-900">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+        <div>
+          <span className="text-xs font-semibold tracking-widest uppercase text-zinc-500">
+            Curated Release
+          </span>
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mt-1">
+            Featured Drop
+          </h2>
+        </div>
+        <p className="text-zinc-400 text-xs uppercase tracking-widest mt-4 md:mt-0">
+          Limited Quantities // SKELE Apparels LLP
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {PRODUCTS.map((product, idx) => (
+          <motion.div
+            key={product.id}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: idx * 0.08 }}
+            className="group flex flex-col justify-between border border-zinc-900 bg-zinc-950/40 p-4"
+          >
+            <div>
+              <div
+                onClick={() => setInspectProduct(product)}
+                className="aspect-[3/4] bg-zinc-900/60 border border-zinc-800/80 relative overflow-hidden flex items-center justify-center mb-4 cursor-pointer"
+              >
+                {product.image ? (
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    unoptimized
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <span className="text-zinc-700 font-bold uppercase tracking-widest text-xs text-center">
+                    [ {product.name} ]
+                  </span>
+                )}
+
+                <span className="absolute top-3 left-3 z-10 text-[10px] uppercase tracking-widest font-semibold px-2 py-0.5 border border-zinc-800 bg-black/80 text-zinc-300">
+                  {product.tag}
+                </span>
+
+                <span className="absolute bottom-3 right-3 z-10 p-1.5 bg-black/70 border border-zinc-800 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Maximize2 className="w-3.5 h-3.5" />
+                </span>
+              </div>
+
+              <div className="flex justify-between items-start">
+                <div onClick={() => setInspectProduct(product)} className="cursor-pointer">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-white group-hover:text-zinc-300 transition-colors">
+                    {product.name}
+                  </h3>
+                  <p className="text-[11px] text-zinc-500 uppercase tracking-widest mt-0.5">
+                    {product.color}
+                  </p>
+                </div>
+                <span className="text-xs font-mono font-semibold text-zinc-200">
+                  {product.displayPrice}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-zinc-900 space-y-3">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {product.sizes.map((size) => {
+                  const isSelected = selectedSizes[product.id] === size;
+                  return (
+                    <button
+                      key={size}
+                      onClick={() => handleSelectSize(product.id, size)}
+                      className={`px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase transition-colors border ${
+                        isSelected
+                          ? "border-white bg-white text-black"
+                          : "border-zinc-800 text-zinc-400 hover:border-zinc-600"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => handleAddToCart(product)}
+                className="w-full py-2.5 bg-zinc-100 hover:bg-white text-black text-[11px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                Add To Bag
+              </button>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <ProductDetailModal
+        isOpen={Boolean(inspectProduct)}
+        product={inspectProduct}
+        onClose={() => setInspectProduct(null)}
+      />
+    </section>
+  );
+}
