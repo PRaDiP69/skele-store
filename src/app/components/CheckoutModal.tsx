@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, CheckCircle2, ShieldCheck, Loader2 } from "lucide-react";
+import { X, CheckCircle2, ShieldCheck } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 interface CheckoutModalProps {
@@ -12,201 +11,177 @@ interface CheckoutModalProps {
 
 export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const { cart, cartTotal, clearCart } = useCart();
-  const [loading, setLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     phone: "",
-    email: "",
     address: "",
     city: "",
     pincode: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  if (!isOpen) return null;
 
-    // Simulate payment / order processing
-    setTimeout(() => {
-      setLoading(false);
-      setIsSuccess(true);
-      clearCart();
-    }, 1500);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleClose = () => {
-    setIsSuccess(false);
-    onClose();
+  const handleOrderSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Generate formatted WhatsApp message order summary
+    const orderItems = cart
+      .map((item) => `• ${item.name} (${item.size}) x${item.quantity} - ₹${item.price * item.quantity}`)
+      .join("\n");
+
+    const message = `*NEW ORDER - SKELE APPARELS*\n\n` +
+      `*Customer:* ${formData.name}\n` +
+      `*Phone:* ${formData.phone}\n` +
+      `*Address:* ${formData.address}, ${formData.city} - ${formData.pincode}\n\n` +
+      `*Order Details:*\n${orderItems}\n\n` +
+      `*Total Amount:* ₹${cartTotal.toLocaleString("en-IN")}\n\n` +
+      `_Awaiting payment confirmation._`;
+
+    // Replace with your brand's contact number (with country code, no + or spaces)
+    const brandNumber = "919819660453"; 
+    const whatsappUrl = `https://wa.me/${brandNumber}?text=${encodeURIComponent(message)}`;
+
+    setIsSubmitted(true);
+    window.open(whatsappUrl, "_blank");
+    clearCart();
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={handleClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm"
-          />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div className="relative w-full max-w-lg bg-zinc-950 border border-zinc-800 p-6 md:p-8 text-white shadow-2xl">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-zinc-400 hover:text-white"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            className="relative w-full max-w-xl bg-zinc-950 border border-zinc-800 p-6 md:p-8 z-10 text-white shadow-2xl"
-          >
+        {isSubmitted ? (
+          <div className="text-center py-8 space-y-4">
+            <CheckCircle2 className="w-12 h-12 text-white mx-auto stroke-1" />
+            <h3 className="text-xl font-bold uppercase tracking-wider">Order Dispatched</h3>
+            <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
+              Your order summary has been redirected to our concierge. We will confirm your delivery slot shortly.
+            </p>
             <button
-              onClick={handleClose}
-              className="absolute top-5 right-5 text-zinc-500 hover:text-white"
+              onClick={() => {
+                setIsSubmitted(false);
+                onClose();
+              }}
+              className="mt-6 px-6 py-2.5 bg-white text-black text-xs font-black uppercase tracking-widest hover:bg-zinc-200 transition-colors"
             >
-              <X className="w-5 h-5" />
+              Back to Catalog
             </button>
+          </div>
+        ) : (
+          <div>
+            <div className="mb-6">
+              <span className="text-[10px] font-mono tracking-widest text-zinc-500 uppercase">
+                Secure Checkout // Drop 001
+              </span>
+              <h2 className="text-2xl font-black uppercase tracking-tight mt-1">
+                Delivery Details
+              </h2>
+            </div>
 
-            {isSuccess ? (
-              <div className="text-center py-8 space-y-4">
-                <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto" />
-                <h3 className="text-xl font-black uppercase tracking-tight">
-                  Order Dispatched // SKELE
-                </h3>
-                <p className="text-xs text-zinc-400 max-w-sm mx-auto uppercase tracking-widest leading-relaxed">
-                  Confirmation receipt and tracking ID sent to your email. Thank you for securing the drop.
-                </p>
-                <div className="pt-4">
-                  <button
-                    onClick={handleClose}
-                    className="px-6 py-3 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200"
-                  >
-                    Return to Drops
-                  </button>
-                </div>
-              </div>
-            ) : (
+            <form onSubmit={handleOrderSubmit} className="space-y-4">
               <div>
-                <div className="mb-6">
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500">
-                    Secure Shipping
-                  </span>
-                  <h2 className="text-xl font-black uppercase tracking-tight mt-1">
-                    Checkout Details
-                  </h2>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-1">
-                        Full Name
-                      </label>
-                      <input
-                        required
-                        type="text"
-                        placeholder="Pradip Pawara"
-                        value={formData.fullName}
-                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                        className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-1">
-                        Phone Number
-                      </label>
-                      <input
-                        required
-                        type="tel"
-                        placeholder="+91 98196 60453"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-1">
-                      Email Address
-                    </label>
-                    <input
-                      required
-                      type="email"
-                      placeholder="pradip@skele.co"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-1">
-                      Street Address
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="Apt, Suite, Street name"
-                      value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-1">
-                        City
-                      </label>
-                      <input
-                        required
-                        type="text"
-                        placeholder="Mumbai"
-                        value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] uppercase tracking-widest text-zinc-400 block mb-1">
-                        PIN Code
-                      </label>
-                      <input
-                        required
-                        type="text"
-                        placeholder="400001"
-                        value={formData.pincode}
-                        onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
-                        className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-zinc-900 flex justify-between items-center text-xs">
-                    <span className="text-zinc-500 uppercase tracking-widest">Total Amount</span>
-                    <span className="font-mono font-bold text-base text-white">₹{cartTotal.toLocaleString()}</span>
-                  </div>
-
-                  <button
-                    disabled={loading || cart.length === 0}
-                    type="submit"
-                    className="w-full py-3 bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 mt-4 cursor-pointer disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" /> Processing Order...
-                      </>
-                    ) : (
-                      <>
-                        <ShieldCheck className="w-4 h-4" /> Place Test Order
-                      </>
-                    )}
-                  </button>
-                </form>
+                <label className="block text-[10px] uppercase tracking-widest text-zinc-400 mb-1">
+                  Full Name
+                </label>
+                <input
+                  required
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="e.g. Alex Mercer"
+                  className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-white transition-colors"
+                />
               </div>
-            )}
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest text-zinc-400 mb-1">
+                  Phone Number
+                </label>
+                <input
+                  required
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="+91 98765 43210"
+                  className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-white transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] uppercase tracking-widest text-zinc-400 mb-1">
+                  Shipping Address
+                </label>
+                <textarea
+                  required
+                  rows={2}
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="Street name, building, apartment"
+                  className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-white transition-colors resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest text-zinc-400 mb-1">
+                    City
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    placeholder="Mumbai"
+                    className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-white transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase tracking-widest text-zinc-400 mb-1">
+                    PIN Code
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    name="pincode"
+                    value={formData.pincode}
+                    onChange={handleChange}
+                    placeholder="400001"
+                    className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-white transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-zinc-900 flex justify-between items-center text-xs font-mono">
+                <span className="text-zinc-500 uppercase tracking-widest">Total Payable</span>
+                <span className="text-base font-bold text-white">₹{cartTotal.toLocaleString("en-IN")}</span>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                Place Order via Concierge
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
