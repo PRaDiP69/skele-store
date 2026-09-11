@@ -1,22 +1,29 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import Providers from "./components/Providers";
 
 export const metadata: Metadata = {
-  title: "SKELE Apparels // Engineered Streetwear",
-  description: "Stripping back conventional style to highlight pieces that resonate with real emotions.",
+  title: "SKELE // UNFRAMED VOL. 1",
+  description: "Stripping back conventional style to highlight pieces that resonate with low-profile noise and heavy presence.",
+  keywords: ["SKELE", "Streetwear", "Brutalist Fashion", "Oversized Tees", "Drop 001"],
+  openGraph: {
+    title: "SKELE // Drop 001 Archive",
+    description: "Limited run apparel. Handcrafted silhouettes, raw textures, and understated graphics.",
+    url: "https://skele-store-tau.vercel.app",
+    siteName: "SKELE",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "SKELE Editorial - Drop 001",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SKELE // Drop 001",
+    description: "Stripping back conventional style to highlight pieces that resonate with low-profile noise.",
+    images: ["/og-image.jpg"],
+  },
 };
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en" className="dark">
-      <body className="bg-[#09090b] text-zinc-100 antialiased selection:bg-white selection:text-black">
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  );
-}
