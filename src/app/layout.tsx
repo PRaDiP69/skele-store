@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://skele-store-tau.vercel.app"),
   title: "SKELE // UNFRAMED VOL. 1",
   description: "Stripping back conventional style to highlight pieces that resonate with low-profile noise and heavy presence.",
   keywords: ["SKELE", "Streetwear", "Brutalist Fashion", "Oversized Tees", "Drop 001"],
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png", // <--- UPDATED THIS LINE FROM .jpg TO .png
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "SKELE Editorial - Drop 001",
@@ -24,6 +25,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SKELE // Drop 001",
     description: "Stripping back conventional style to highlight pieces that resonate with low-profile noise.",
-    images: ["/og-image.png"], // <--- UPDATED THIS LINE FROM .jpg TO .png
+    images: ["/og-image.png"],
   },
 };
