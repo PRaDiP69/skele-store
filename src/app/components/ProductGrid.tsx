@@ -78,7 +78,7 @@ const PRODUCTS: ProductDetailItem[] = [
 ];
 
 export default function ProductGrid() {
-  const { addToCart } = useCart();
+ const { addToCart, openCart } = useCart();
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({
     "prod-red-flag": "M",
     "prod-hooked": "M",
@@ -95,6 +95,7 @@ export default function ProductGrid() {
   };
 
   const handleAddToCart = (product: ProductDetailItem) => {
+    if (product.inStock === false) return;
     const chosenSize = selectedSizes[product.id] || product.sizes[0];
     addToCart({
       id: product.id,
@@ -103,6 +104,7 @@ export default function ProductGrid() {
       size: chosenSize,
       image: product.image,
     });
+    openCart();
   };
 
   return (
@@ -229,7 +231,7 @@ export default function ProductGrid() {
   onClick={() => handleAddToCart(product)}
   className={`w-full py-2.5 text-xs font-mono tracking-widest uppercase transition-all ${
     product.inStock === false
-      ? "bg-neutral-900 text-neutral-600 border border-neutral-800 cursor-not-allowed"
+      ? "bg-neutral-900 text-neutral-600 border border-neutral-800 cursor-not-allowed pointer-events-none"
       : "bg-white text-black hover:bg-neutral-200 cursor-pointer"
   }`}
 >
