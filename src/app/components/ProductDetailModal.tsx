@@ -14,9 +14,10 @@ export interface ProductDetailItem {
   tag: string;
   color: string;
   sizes: string[];
-  image?: string;
-  description?: string;
-  specs?: string[];
+  image: string;
+  inStock?: boolean;
+  soldOutSizes?: string[];
+  // keep your other existing fields here
 }
 
 interface ProductDetailModalProps {
