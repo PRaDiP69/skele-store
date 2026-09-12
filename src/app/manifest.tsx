@@ -14,16 +14,14 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: "portrait",
     icons: [
       {
-        src: "/products/Hooked.png",
-        sizes: "any",
+        src: "/icon",
+        sizes: "192x192",
         type: "image/png",
-        purpose: "maskable",
       },
       {
-        src: "/products/Hooked.png",
-        sizes: "any",
+        src: "/apple-icon",
+        sizes: "512x512",
         type: "image/png",
-        purpose: "any",
       },
     ],
   };

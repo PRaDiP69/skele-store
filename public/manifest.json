@@ -10,16 +10,14 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/products/Hooked.png",
-      "sizes": "any",
-      "type": "image/png",
-      "purpose": "maskable"
+      "src": "/icon",
+      "sizes": "192x192",
+      "type": "image/png"
     },
     {
-      "src": "/products/Hooked.png",
-      "sizes": "any",
-      "type": "image/png",
-      "purpose": "any"
+      "src": "/apple-icon",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ]
 }
