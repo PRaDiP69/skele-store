@@ -3,11 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Maximize2 } from "lucide-react";
+import { Maximize2, Flame, AlertCircle } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import ProductDetailModal, { ProductDetailItem } from "./ProductDetailModal";
 
-const PRODUCTS: ProductDetailItem[] = [
+interface ExtendedProductDetailItem extends ProductDetailItem {
+  stockCount?: number;
+}
+
+const PRODUCTS: ExtendedProductDetailItem[] = [
   {
     id: "prod-red-flag",
     name: "Red Flag",
@@ -18,6 +22,7 @@ const PRODUCTS: ProductDetailItem[] = [
     sizes: ["S", "M", "L", "XL"],
     image: "/products/red-flag.png",
     inStock: true,
+    stockCount: 8,
   },
   {
     id: "prod-hooked",
@@ -29,6 +34,7 @@ const PRODUCTS: ProductDetailItem[] = [
     sizes: ["S", "M", "L", "XL"],
     image: "/products/Hooked.png",
     inStock: true,
+    stockCount: 5,
   },
   {
     id: "prod-done-playing-blue",
@@ -40,6 +46,7 @@ const PRODUCTS: ProductDetailItem[] = [
     sizes: ["S", "M", "L", "XL"],
     image: "/products/done-playing-blue.png",
     inStock: true,
+    stockCount: 12,
   },
   {
     id: "prod-ulterior-motive-green",
@@ -51,6 +58,7 @@ const PRODUCTS: ProductDetailItem[] = [
     sizes: ["S", "M", "L", "XL"],
     image: "/products/Ulterior-motive-green.png",
     inStock: true,
+    stockCount: 4,
   },
   {
     id: "prod-transcend",
@@ -63,6 +71,7 @@ const PRODUCTS: ProductDetailItem[] = [
     image: "/products/transcend.png",
     soldOutSizes: ["XL"],
     inStock: true,
+    stockCount: 3,
   },
   {
     id: "prod-disaster-black",
@@ -74,6 +83,7 @@ const PRODUCTS: ProductDetailItem[] = [
     sizes: ["S", "M", "L", "XL"],
     image: "/products/disaster-black.png",
     inStock: false,
+    stockCount: 0,
   },
 ];
 
@@ -94,7 +104,7 @@ export default function ProductGrid() {
     setSelectedSizes((prev) => ({ ...prev, [productId]: size }));
   };
 
-  const handleAddToCart = (product: ProductDetailItem) => {
+  const handleAddToCart = (product: ExtendedProductDetailItem) => {
     if (product.inStock === false) return;
     const chosenSize = selectedSizes[product.id] || product.sizes[0];
     addToCart({
@@ -109,23 +119,35 @@ export default function ProductGrid() {
 
   return (
     <section id="drops" className="py-24 px-6 max-w-7xl mx-auto border-t border-zinc-900">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+      {/* Drop Header & Status Ticker */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
         <div>
-          <span className="text-xs font-semibold tracking-widest uppercase text-zinc-500">
-            Curated Release
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mt-1">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-mono font-semibold tracking-widest uppercase text-emerald-400">
+              Drop 001 Active // Limited Batch
+            </span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white">
             Featured Drop
           </h2>
         </div>
-        <p className="text-zinc-400 text-xs uppercase tracking-widest mt-4 md:mt-0">
-          Limited Quantities // SKELE Apparels LLP
-        </p>
+
+        <div className="flex items-center gap-3 border border-zinc-800 bg-zinc-950/80 px-4 py-2 text-[11px] font-mono text-zinc-400">
+          <div className="flex items-center gap-1.5 text-zinc-300">
+            <Flame className="w-3.5 h-3.5 text-amber-500" />
+            <span>280+ GSM Custom Milled</span>
+          </div>
+          <span className="text-zinc-700">|</span>
+          <span className="text-zinc-500 uppercase tracking-widest">No Restocks</span>
+        </div>
       </div>
 
+      {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {PRODUCTS.map((product, idx) => {
           const isSoldOut = product.inStock === false;
+          const isLowStock = !isSoldOut && typeof product.stockCount === "number" && product.stockCount <= 5;
 
           return (
             <motion.div
@@ -158,10 +180,18 @@ export default function ProductGrid() {
                     </span>
                   )}
 
-                  {/* Badge */}
-                  <span className="absolute top-3 left-3 z-10 text-[10px] uppercase tracking-widest font-semibold px-2 py-0.5 border border-zinc-800 bg-black/80 text-zinc-300">
-                    {isSoldOut ? "ARCHIVED" : product.tag}
-                  </span>
+                  {/* Primary Status Badges */}
+                  <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 items-start">
+                    <span className="text-[10px] uppercase tracking-widest font-semibold px-2 py-0.5 border border-zinc-800 bg-black/80 text-zinc-300">
+                      {isSoldOut ? "ARCHIVED" : product.tag}
+                    </span>
+                    {isLowStock && (
+                      <span className="text-[9px] font-mono uppercase tracking-widest font-bold px-2 py-0.5 border border-amber-500/40 bg-black/90 text-amber-400 flex items-center gap-1">
+                        <AlertCircle className="w-2.5 h-2.5" />
+                        Only {product.stockCount} Left
+                      </span>
+                    )}
+                  </div>
 
                   {/* Expand Icon */}
                   <span className="absolute bottom-3 right-3 z-10 p-1.5 bg-black/70 border border-zinc-800 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -190,7 +220,8 @@ export default function ProductGrid() {
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {product.sizes.map((size) => {
                     const isSelected = selectedSizes[product.id] === size;
-                    const isSizeUnavailable = isSoldOut || (product.soldOutSizes?.includes(size) ?? false);
+                    const isSizeUnavailable =
+                      isSoldOut || (product.soldOutSizes?.includes(size) ?? false);
 
                     return (
                       <button
