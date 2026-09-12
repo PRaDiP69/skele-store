@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   },
   description:
     "Heavyweight 280+ GSM luxury streetwear engineered with boxy silhouettes and raw aesthetics. Limited capsule run operated by SKELE Apparels LLP, Mumbai.",
+  manifest: "/manifest.webmanifest",
   keywords: [
     "SKELE",
     "SKELE Apparels",
