@@ -1,5 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { MessageCircle, ShieldCheck, Truck, RefreshCw } from "lucide-react";
+import { MessageCircle, ShieldCheck, Truck, RefreshCw, ArrowRight, CheckCircle2 } from "lucide-react";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -21,6 +24,15 @@ function InstagramIcon({ className }: { className?: string }) {
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleWaitlistSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setSubscribed(true);
+    setEmail("");
+  };
 
   return (
     <footer className="border-t border-zinc-900 bg-black text-zinc-500 pt-16 pb-12 px-6 text-xs uppercase tracking-widest">
@@ -31,22 +43,70 @@ export default function Footer() {
             <ShieldCheck className="w-5 h-5 text-zinc-400 shrink-0" />
             <div>
               <p className="text-zinc-200 font-bold tracking-wider">280+ GSM Heavyweight</p>
-              <p className="text-[10px] text-zinc-500 normal-case tracking-normal">Durable custom milled organic cotton.</p>
+              <p className="text-[10px] text-zinc-500 normal-case tracking-normal">
+                Durable custom milled organic cotton.
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <Truck className="w-5 h-5 text-zinc-400 shrink-0" />
             <div>
               <p className="text-zinc-200 font-bold tracking-wider">Pan-India Dispatch</p>
-              <p className="text-[10px] text-zinc-500 normal-case tracking-normal">Secure door-to-door courier tracking.</p>
+              <p className="text-[10px] text-zinc-500 normal-case tracking-normal">
+                Secure door-to-door courier tracking.
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <RefreshCw className="w-5 h-5 text-zinc-400 shrink-0" />
             <div>
               <p className="text-zinc-200 font-bold tracking-wider">Direct Concierge</p>
-              <p className="text-[10px] text-zinc-500 normal-case tracking-normal">Direct WhatsApp verification on every order.</p>
+              <p className="text-[10px] text-zinc-500 normal-case tracking-normal">
+                Direct WhatsApp verification on every order.
+              </p>
             </div>
+          </div>
+        </div>
+
+        {/* Drop 002 Early Access / Waitlist Strip */}
+        <div className="p-6 md:p-8 bg-zinc-950 border border-zinc-900 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+          <div className="max-w-md">
+            <span className="text-[10px] font-mono tracking-widest text-zinc-500 uppercase block mb-1">
+              Priority Access // Private Dispatch
+            </span>
+            <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-white">
+              Join Drop 002 Waitlist
+            </h3>
+            <p className="text-zinc-400 text-xs normal-case tracking-normal mt-1 leading-relaxed">
+              Subscribers receive locked drop passwords 1 hour prior to public release. No spam, strictly capsule releases.
+            </p>
+          </div>
+
+          <div className="w-full lg:w-auto min-w-[320px]">
+            {subscribed ? (
+              <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs border border-emerald-950 bg-emerald-950/20 p-3">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>CONFIRMED // INVITATION REGISTERED</span>
+              </div>
+            ) : (
+              <form onSubmit={handleWaitlistSubmit} className="flex gap-2">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="ENTER YOUR EMAIL..."
+                  className="bg-black border border-zinc-800 px-3 py-2.5 text-xs font-mono text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 w-full"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2.5 bg-white hover:bg-zinc-200 text-black text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer"
+                >
+                  <span>Request</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </form>
+            )}
           </div>
         </div>
 
@@ -92,7 +152,7 @@ export default function Footer() {
             <ul className="space-y-2 text-zinc-400">
               <li>
                 <a
-                  href="https://wa.me/919999999999"
+                  href="https://wa.me/919819660453"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 hover:text-white transition-colors"
