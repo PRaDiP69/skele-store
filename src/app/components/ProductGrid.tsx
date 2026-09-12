@@ -1,91 +1,14 @@
-"use client";
+﻿"use client";
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Maximize2, Flame, AlertCircle, Search, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import ProductDetailModal, { ProductDetailItem } from "./ProductDetailModal";
+import { useInventory, GarmentItem, SizeKey } from "../context/InventoryContext";
+import ProductDetailModal from "./ProductDetailModal";
 
-interface ExtendedProductDetailItem extends ProductDetailItem {
-  stockCount?: number;
-}
-
-const PRODUCTS: ExtendedProductDetailItem[] = [
-  {
-    id: "prod-red-flag",
-    name: "Red Flag",
-    price: 2499,
-    displayPrice: "₹2,499",
-    tag: "Signature",
-    color: "Blood Crimson",
-    sizes: ["S", "M", "L", "XL"],
-    image: "/products/red-flag.png",
-    inStock: true,
-    stockCount: 8,
-  },
-  {
-    id: "prod-hooked",
-    name: "Hooked",
-    price: 2699,
-    displayPrice: "₹2,699",
-    tag: "Heavyweight",
-    color: "Onyx Black",
-    sizes: ["S", "M", "L", "XL"],
-    image: "/products/Hooked.png",
-    inStock: true,
-    stockCount: 5,
-  },
-  {
-    id: "prod-done-playing-blue",
-    name: "Done Playing",
-    price: 2799,
-    displayPrice: "₹2,799",
-    tag: "Washed Cut",
-    color: "Cobalt Blue",
-    sizes: ["S", "M", "L", "XL"],
-    image: "/products/done-playing-blue.png",
-    inStock: true,
-    stockCount: 12,
-  },
-  {
-    id: "prod-ulterior-motive-green",
-    name: "Ulterior Motive",
-    price: 2899,
-    displayPrice: "₹2,899",
-    tag: "Limited",
-    color: "Forest Green",
-    sizes: ["S", "M", "L", "XL"],
-    image: "/products/Ulterior-motive-green.png",
-    inStock: true,
-    stockCount: 4,
-  },
-  {
-    id: "prod-transcend",
-    name: "Transcend",
-    price: 3199,
-    displayPrice: "₹3,199",
-    tag: "Raw Hem",
-    color: "Acid Stone",
-    sizes: ["S", "M", "L", "XL"],
-    image: "/products/transcend.png",
-    soldOutSizes: ["XL"],
-    inStock: true,
-    stockCount: 3,
-  },
-  {
-    id: "prod-disaster-black",
-    name: "Disaster",
-    price: 2999,
-    displayPrice: "₹2,999",
-    tag: "Boxy Fit",
-    color: "Washed Black",
-    sizes: ["S", "M", "L", "XL"],
-    image: "/products/disaster-black.png",
-    inStock: false,
-    stockCount: 0,
-  },
-];
+const DEFAULT_SIZES: SizeKey[] = ["S", "M", "L", "XL"];
 
 const COLOR_CATEGORIES = [
   { label: "All Colors", value: "all" },
@@ -98,11 +21,12 @@ const COLOR_CATEGORIES = [
 
 export default function ProductGrid() {
   const { addToCart, openCart } = useCart();
+  const { inventory } = useInventory();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedColor, setSelectedColor] = useState("all");
 
-  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, SizeKey>>({
     "prod-red-flag": "M",
     "prod-hooked": "M",
     "prod-done-playing-blue": "M",
@@ -111,15 +35,17 @@ export default function ProductGrid() {
     "prod-disaster-black": "M",
   });
 
-  const [inspectProduct, setInspectProduct] = useState<ProductDetailItem | null>(null);
+  const [inspectProduct, setInspectProduct] = useState<any | null>(null);
 
-  const handleSelectSize = (productId: string, size: string) => {
+  const handleSelectSize = (productId: string, size: SizeKey) => {
     setSelectedSizes((prev) => ({ ...prev, [productId]: size }));
   };
 
-  const handleAddToCart = (product: ExtendedProductDetailItem) => {
-    if (product.inStock === false) return;
-    const chosenSize = selectedSizes[product.id] || product.sizes[0];
+  const handleAddToCart = (product: GarmentItem) => {
+    const chosenSize = selectedSizes[product.id] || "M";
+    const available = product.sizeStock?.[chosenSize] ?? 0;
+    if (available <= 0 || !product.inStock) return;
+
     addToCart({
       id: product.id,
       name: product.name,
@@ -131,25 +57,23 @@ export default function ProductGrid() {
   };
 
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((item) => {
+    return (inventory || []).filter((item) => {
       const matchesSearch =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.tag.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.color.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesColor =
-        selectedColor === "all" ||
-        item.color.toLowerCase().includes(selectedColor);
+        selectedColor === "all" || item.color.toLowerCase().includes(selectedColor);
 
       return matchesSearch && matchesColor;
     });
-  }, [searchQuery, selectedColor]);
+  }, [inventory, searchQuery, selectedColor]);
 
   const isFiltering = searchQuery.trim() !== "" || selectedColor !== "all";
 
   return (
     <section id="drops" className="py-24 px-6 max-w-7xl mx-auto border-t border-zinc-900">
-      {/* Drop Header & Status Ticker */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
@@ -173,9 +97,7 @@ export default function ProductGrid() {
         </div>
       </div>
 
-      {/* Filter & Search Bar */}
       <div className="mb-8 pb-6 border-b border-zinc-900 flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
-        {/* Search Input */}
         <div className="relative flex-1 max-w-md">
           <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -195,7 +117,6 @@ export default function ProductGrid() {
           )}
         </div>
 
-        {/* Colorway Pills */}
         <div className="flex items-center gap-1.5 flex-wrap">
           {COLOR_CATEGORIES.map((cat) => {
             const isActive = selectedColor === cat.value;
@@ -203,7 +124,7 @@ export default function ProductGrid() {
               <button
                 key={cat.value}
                 onClick={() => setSelectedColor(cat.value)}
-                className={`px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest transition-colors border ${
+                className={`px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest transition-colors border cursor-pointer ${
                   isActive
                     ? "border-white bg-white text-black font-bold"
                     : "border-zinc-900 bg-zinc-950 text-zinc-400 hover:border-zinc-700"
@@ -216,12 +137,11 @@ export default function ProductGrid() {
         </div>
       </div>
 
-      {/* Dynamic Results Counter */}
       <div className="mb-6 flex justify-between items-center text-[10px] font-mono tracking-widest text-zinc-500 uppercase">
         <span>
           {isFiltering
-            ? `Showing ${filteredProducts.length} of ${PRODUCTS.length} Garments`
-            : `Showing All ${PRODUCTS.length} Garments`}
+            ? `Showing ${filteredProducts.length} of ${inventory.length} Garments`
+            : `Showing All ${inventory.length} Garments`}
         </span>
         {isFiltering && (
           <button
@@ -229,14 +149,13 @@ export default function ProductGrid() {
               setSearchQuery("");
               setSelectedColor("all");
             }}
-            className="text-zinc-400 hover:text-white transition-colors underline underline-offset-4"
+            className="text-zinc-400 hover:text-white transition-colors underline underline-offset-4 cursor-pointer"
           >
             Clear All
           </button>
         )}
       </div>
 
-      {/* Product Grid / Empty State */}
       {filteredProducts.length === 0 ? (
         <div className="py-20 text-center border border-zinc-900 bg-zinc-950/40 space-y-3">
           <p className="text-xs font-mono uppercase tracking-widest text-zinc-500">
@@ -247,7 +166,7 @@ export default function ProductGrid() {
               setSearchQuery("");
               setSelectedColor("all");
             }}
-            className="text-xs font-mono uppercase tracking-widest text-white underline underline-offset-4 hover:text-zinc-300"
+            className="text-xs font-mono uppercase tracking-widest text-white underline underline-offset-4 hover:text-zinc-300 cursor-pointer"
           >
             Reset Filters
           </button>
@@ -255,11 +174,12 @@ export default function ProductGrid() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map((product, idx) => {
-            const isSoldOut = product.inStock === false;
-            const isLowStock =
-              !isSoldOut &&
-              typeof product.stockCount === "number" &&
-              product.stockCount <= 5;
+            const sizeStock = product.sizeStock || { S: 0, M: 0, L: 0, XL: 0 };
+            const totalStock = Object.values(sizeStock).reduce((a, b) => a + b, 0);
+            const isAllSoldOut = !product.inStock || totalStock === 0;
+            const currentChosenSize = selectedSizes[product.id] || "M";
+            const chosenSizeUnits = sizeStock[currentChosenSize] ?? 0;
+            const isChosenSizeSoldOut = chosenSizeUnits === 0;
 
             return (
               <motion.div
@@ -270,9 +190,15 @@ export default function ProductGrid() {
                 className="group flex flex-col justify-between border border-zinc-900 bg-zinc-950/40 p-4"
               >
                 <div>
-                  {/* Image Container */}
                   <div
-                    onClick={() => setInspectProduct(product)}
+                    onClick={() =>
+                      setInspectProduct({
+                        ...product,
+                        sizes: DEFAULT_SIZES,
+                        stockCount: totalStock,
+                        soldOutSizes: DEFAULT_SIZES.filter((s) => (sizeStock[s] ?? 0) === 0),
+                      })
+                    }
                     className="aspect-[3/4] bg-zinc-900/60 border border-zinc-800/80 relative overflow-hidden flex items-center justify-center mb-4 cursor-pointer"
                   >
                     {product.image ? (
@@ -282,7 +208,7 @@ export default function ProductGrid() {
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className={`object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
-                          isSoldOut ? "grayscale opacity-40" : ""
+                          isAllSoldOut ? "grayscale opacity-40" : ""
                         }`}
                       />
                     ) : (
@@ -291,29 +217,33 @@ export default function ProductGrid() {
                       </span>
                     )}
 
-                    {/* Primary Status Badges */}
                     <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 items-start">
                       <span className="text-[10px] uppercase tracking-widest font-semibold px-2 py-0.5 border border-zinc-800 bg-black/80 text-zinc-300">
-                        {isSoldOut ? "ARCHIVED" : product.tag}
+                        {isAllSoldOut ? "ARCHIVED" : product.tag}
                       </span>
-                      {isLowStock && (
+                      {!isAllSoldOut && totalStock <= 6 && (
                         <span className="text-[9px] font-mono uppercase tracking-widest font-bold px-2 py-0.5 border border-amber-500/40 bg-black/90 text-amber-400 flex items-center gap-1">
                           <AlertCircle className="w-2.5 h-2.5" />
-                          Only {product.stockCount} Left
+                          Only {totalStock} Total Left
                         </span>
                       )}
                     </div>
 
-                    {/* Expand Icon */}
                     <span className="absolute bottom-3 right-3 z-10 p-1.5 bg-black/70 border border-zinc-800 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Maximize2 className="w-3.5 h-3.5" />
                     </span>
                   </div>
 
-                  {/* Info */}
                   <div className="flex justify-between items-start">
                     <div
-                      onClick={() => setInspectProduct(product)}
+                      onClick={() =>
+                        setInspectProduct({
+                          ...product,
+                          sizes: DEFAULT_SIZES,
+                          stockCount: totalStock,
+                          soldOutSizes: DEFAULT_SIZES.filter((s) => (sizeStock[s] ?? 0) === 0),
+                        })
+                      }
                       className="cursor-pointer"
                     >
                       <h3 className="text-xs font-bold uppercase tracking-wider text-white group-hover:text-zinc-300 transition-colors">
@@ -329,27 +259,26 @@ export default function ProductGrid() {
                   </div>
                 </div>
 
-                {/* Sizes & Action Button */}
                 <div className="mt-6 pt-4 border-t border-zinc-900 space-y-3">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    {product.sizes.map((size) => {
-                      const isSelected = selectedSizes[product.id] === size;
-                      const isSizeUnavailable =
-                        isSoldOut ||
-                        (product.soldOutSizes?.includes(size) ?? false);
+                    {DEFAULT_SIZES.map((size) => {
+                      const count = sizeStock[size] ?? 0;
+                      const isOutOfStock = isAllSoldOut || count === 0;
+                      const isSelected = currentChosenSize === size;
 
                       return (
                         <button
                           key={size}
-                          disabled={isSizeUnavailable}
+                          disabled={isOutOfStock}
                           onClick={() => handleSelectSize(product.id, size)}
-                          className={`px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase transition-colors border ${
-                            isSizeUnavailable
+                          className={`px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase transition-colors border cursor-pointer ${
+                            isOutOfStock
                               ? "border-zinc-900 text-zinc-700 cursor-not-allowed line-through"
                               : isSelected
-                              ? "border-white bg-white text-black cursor-pointer"
-                              : "border-zinc-800 text-zinc-400 hover:border-zinc-600 cursor-pointer"
+                              ? "border-white bg-white text-black"
+                              : "border-zinc-800 text-zinc-400 hover:border-zinc-600"
                           }`}
+                          title={isOutOfStock ? `${size} Sold Out` : `${size} (${count} units)`}
                         >
                           {size}
                         </button>
@@ -358,15 +287,19 @@ export default function ProductGrid() {
                   </div>
 
                   <button
-                    disabled={isSoldOut}
+                    disabled={isAllSoldOut || isChosenSizeSoldOut}
                     onClick={() => handleAddToCart(product)}
                     className={`w-full py-2.5 text-xs font-mono tracking-widest uppercase transition-all ${
-                      isSoldOut
+                      isAllSoldOut || isChosenSizeSoldOut
                         ? "bg-zinc-900 text-zinc-600 border border-zinc-800 cursor-not-allowed"
                         : "bg-white text-black hover:bg-zinc-200 cursor-pointer"
                     }`}
                   >
-                    {isSoldOut ? "Sold Out" : "Acquire // Quick Add"}
+                    {isAllSoldOut
+                      ? "Entire Capsule Sold Out"
+                      : isChosenSizeSoldOut
+                      ? `Size ${currentChosenSize} Sold Out`
+                      : `Acquire [${currentChosenSize}] // Quick Add`}
                   </button>
                 </div>
               </motion.div>
@@ -375,7 +308,6 @@ export default function ProductGrid() {
         </div>
       )}
 
-      {/* Product Detail Modal */}
       <ProductDetailModal
         product={inspectProduct}
         isOpen={inspectProduct !== null}

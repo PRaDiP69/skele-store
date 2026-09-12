@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -37,7 +37,6 @@ export default function Footer() {
   return (
     <footer className="border-t border-zinc-900 bg-black text-zinc-500 pt-16 pb-12 px-6 text-xs uppercase tracking-widest">
       <div className="max-w-7xl mx-auto space-y-12">
-        {/* Value Props Strip */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pb-12 border-b border-zinc-900/80">
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-5 h-5 text-zinc-400 shrink-0" />
@@ -68,7 +67,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Drop 002 Early Access / Waitlist Strip */}
         <div className="p-6 md:p-8 bg-zinc-950 border border-zinc-900 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div className="max-w-md">
             <span className="text-[10px] font-mono tracking-widest text-zinc-500 uppercase block mb-1">
@@ -78,7 +76,7 @@ export default function Footer() {
               Join Drop 002 Waitlist
             </h3>
             <p className="text-zinc-400 text-xs normal-case tracking-normal mt-1 leading-relaxed">
-              Subscribers receive locked drop passwords 1 hour prior to public release. No spam, strictly capsule releases.
+              Subscribers receive locked drop passwords 1 hour prior to public release.
             </p>
           </div>
 
@@ -110,9 +108,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Main Columns */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-          {/* Brand Col */}
           <div className="space-y-4 md:col-span-2">
             <span className="text-2xl font-black text-white tracking-widest block">SKELE</span>
             <p className="normal-case text-zinc-400 text-xs tracking-normal max-w-sm leading-relaxed">
@@ -124,12 +120,11 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Navigation */}
           <div className="space-y-3">
-            <h4 className="text-zinc-200 font-bold text-[11px] tracking-wider">Collections</h4>
+            <h4 className="text-zinc-200 font-bold text-[11px] tracking-wider">Navigation</h4>
             <ul className="space-y-2 text-zinc-400">
               <li>
-                <Link href="#drops" className="hover:text-white transition-colors">
+                <Link href="/#drops" className="hover:text-white transition-colors">
                   Drop 001 Capsule
                 </Link>
               </li>
@@ -139,14 +134,18 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/admin" className="hover:text-white transition-colors text-zinc-500">
-                  Inventory Terminal
+                <Link href="/shipping" className="hover:text-white transition-colors">
+                  Shipping & Dispatch
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-white transition-colors">
+                  Terms & Garment Care
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Concierge & Social */}
           <div className="space-y-3">
             <h4 className="text-zinc-200 font-bold text-[11px] tracking-wider">Direct Concierge</h4>
             <ul className="space-y-2 text-zinc-400">
@@ -185,12 +184,13 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Legal & Copyright */}
         <div className="pt-8 border-t border-zinc-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-mono text-zinc-600">
           <p>© {currentYear} SKELE APPARELS LLP. ALL RIGHTS RESERVED.</p>
-          <p className="uppercase tracking-widest text-zinc-600">
-            ENGINEERED FOR HEAVYWEIGHT SILHOUETTES
-          </p>
+          <div className="flex gap-4">
+            <Link href="/shipping" className="hover:text-zinc-400 transition-colors">SHIPPING</Link>
+            <span>//</span>
+            <Link href="/terms" className="hover:text-zinc-400 transition-colors">TERMS</Link>
+          </div>
         </div>
       </div>
     </footer>

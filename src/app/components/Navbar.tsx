@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -6,70 +6,63 @@ import { ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
-  const { cart, openCart } = useCart();
+  const { openCart, cartCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-
-  const closeMenu = () => setMobileMenuOpen(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-md border-b border-zinc-900">
+    <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-md border-b border-zinc-900">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-zinc-400 hover:text-white transition-colors"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+        <Link href="/" className="text-xl font-black tracking-widest uppercase text-white">
+          SKELE
+        </Link>
 
-          <Link href="/" onClick={closeMenu} className="text-lg font-black tracking-widest uppercase text-white">
-            SKELE
-          </Link>
-        </div>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-widest text-zinc-400">
+        <nav className="hidden md:flex items-center gap-8 text-xs uppercase font-mono tracking-widest text-zinc-400">
           <Link href="/#drops" className="hover:text-white transition-colors">
-            Drops
-          </Link>
-          <Link href="/#philosophy" className="hover:text-white transition-colors">
-            Philosophy
+            Drop 001
           </Link>
           <Link href="/lookbook" className="hover:text-white transition-colors">
             Lookbook
           </Link>
         </nav>
 
-        {/* Cart Trigger */}
-        <button
-  onClick={() => {
-    console.log("Cart button clicked!");
-    openCart();
-  }}
-  className="relative p-2 text-zinc-300 hover:text-white transition-colors cursor-pointer"
-  aria-label="Open Cart"
->
-          <ShoppingBag className="w-5 h-5" />
-          {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white text-black text-[10px] font-bold flex items-center justify-center">
-              {cartCount}
-            </span>
-          )}
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={openCart}
+            className="flex items-center gap-2 border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs font-mono text-zinc-300 hover:border-zinc-600 transition-colors cursor-pointer"
+          >
+            <ShoppingBag className="w-3.5 h-3.5" />
+            <span>Bag</span>
+            {cartCount > 0 && (
+              <span className="bg-white text-black px-1.5 py-0.2 text-[10px] font-bold">
+                {cartCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-1.5 md:hidden text-zinc-400 hover:text-white"
+            aria-label="Toggle navigation"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-black border-b border-zinc-900 px-6 py-6 flex flex-col gap-5 text-sm font-bold uppercase tracking-widest text-zinc-300">
-          <Link href="/#drops" onClick={closeMenu} className="hover:text-white transition-colors">
-            Drops
+        <div className="md:hidden border-t border-zinc-900 bg-black px-6 py-6 space-y-4 text-xs font-mono uppercase tracking-widest">
+          <Link
+            href="/#drops"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-zinc-300 hover:text-white"
+          >
+            Drop 001 Capsule
           </Link>
-          <Link href="/#philosophy" onClick={closeMenu} className="hover:text-white transition-colors">
-            Philosophy
-          </Link>
-          <Link href="/lookbook" onClick={closeMenu} className="hover:text-white transition-colors">
+          <Link
+            href="/lookbook"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-zinc-300 hover:text-white"
+          >
             Lookbook
           </Link>
         </div>
