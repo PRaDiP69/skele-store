@@ -174,7 +174,12 @@ export default function Footer() {
               </li>
               <li className="pt-2">
                 <span className="text-[10px] font-mono text-zinc-600 block">SUPPORT DESK</span>
-                <span className="text-zinc-400 lowercase text-[11px]">concierge@skele.co</span>
+                <a
+                  href="mailto:support@skele.co"
+                  className="text-zinc-400 lowercase text-[11px] hover:text-white transition-colors block"
+                >
+                  support@skele.co
+                </a>
               </li>
             </ul>
           </div>
