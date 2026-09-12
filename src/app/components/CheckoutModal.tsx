@@ -29,21 +29,32 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const handleOrderSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Generate formatted WhatsApp message order summary
-    const orderItems = cart
-      .map((item) => `• ${item.name} (${item.size}) x${item.quantity} - ₹${item.price * item.quantity}`)
-      .join("\n");
+    const orderId = `SKL-${Date.now().toString().slice(-5)}`;
+    const itemsList = cart
+      .map(
+        (item) =>
+          `• *${item.name}* [${item.size}]\n  Qty: ${item.quantity} × ₹${item.price.toLocaleString("en-IN")} = ₹${(item.price * item.quantity).toLocaleString("en-IN")}`
+      )
+      .join("\n\n");
 
-    const message = `*NEW ORDER - SKELE APPARELS*\n\n` +
-      `*Customer:* ${formData.name}\n` +
-      `*Phone:* ${formData.phone}\n` +
-      `*Address:* ${formData.address}, ${formData.city} - ${formData.pincode}\n\n` +
-      `*Order Details:*\n${orderItems}\n\n` +
-      `*Total Amount:* ₹${cartTotal.toLocaleString("en-IN")}\n\n` +
-      `_Awaiting payment confirmation._`;
+    const message =
+      `*ORDER REQUEST // ${orderId}*\n` +
+      `─────────────────────────\n` +
+      `*CUSTOMER DETAILS*\n` +
+      `Name: ${formData.name}\n` +
+      `Contact: ${formData.phone}\n` +
+      `Address: ${formData.address}\n` +
+      `City/PIN: ${formData.city} - ${formData.pincode}\n` +
+      `─────────────────────────\n` +
+      `*ORDER ITEMS*\n` +
+      `${itemsList}\n` +
+      `─────────────────────────\n` +
+      `*TOTAL PAYABLE:* ₹${cartTotal.toLocaleString("en-IN")}\n` +
+      `*DISPATCH:* Standard Express (Pan-India)\n` +
+      `─────────────────────────\n` +
+      `_Awaiting payment confirmation & dispatch slot._`;
 
-    // Replace with your brand's contact number (with country code, no + or spaces)
-    const brandNumber = "919819660453"; 
+    const brandNumber = "919819660453";
     const whatsappUrl = `https://wa.me/${brandNumber}?text=${encodeURIComponent(message)}`;
 
     setIsSubmitted(true);
