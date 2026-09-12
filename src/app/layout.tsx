@@ -68,3 +68,17 @@ export const metadata: Metadata = {
     },
   },
 };
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className="dark bg-black text-white selection:bg-white selection:text-black">
+      <body className="min-h-screen bg-black text-white antialiased flex flex-col font-sans">
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
