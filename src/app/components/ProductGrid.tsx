@@ -145,6 +145,8 @@ export default function ProductGrid() {
     });
   }, [searchQuery, selectedColor]);
 
+  const isFiltering = searchQuery.trim() !== "" || selectedColor !== "all";
+
   return (
     <section id="drops" className="py-24 px-6 max-w-7xl mx-auto border-t border-zinc-900">
       {/* Drop Header & Status Ticker */}
@@ -172,7 +174,7 @@ export default function ProductGrid() {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="mb-10 pb-6 border-b border-zinc-900 flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
+      <div className="mb-8 pb-6 border-b border-zinc-900 flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
           <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -212,6 +214,26 @@ export default function ProductGrid() {
             );
           })}
         </div>
+      </div>
+
+      {/* Dynamic Results Counter */}
+      <div className="mb-6 flex justify-between items-center text-[10px] font-mono tracking-widest text-zinc-500 uppercase">
+        <span>
+          {isFiltering
+            ? `Showing ${filteredProducts.length} of ${PRODUCTS.length} Garments`
+            : `Showing All ${PRODUCTS.length} Garments`}
+        </span>
+        {isFiltering && (
+          <button
+            onClick={() => {
+              setSearchQuery("");
+              setSelectedColor("all");
+            }}
+            className="text-zinc-400 hover:text-white transition-colors underline underline-offset-4"
+          >
+            Clear All
+          </button>
+        )}
       </div>
 
       {/* Product Grid / Empty State */}
