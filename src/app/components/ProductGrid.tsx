@@ -220,7 +220,7 @@ export default function ProductGrid() {
                       : "bg-white text-black hover:bg-zinc-200 cursor-pointer"
                   }`}
                 >
-                  {isSoldOut ? "VAULTED // SOLD OUT" : "ACQUIRE // QUICK ADD"}
+                  {isSoldOut ? "Sold Out" : "Acquire // Quick Add"}
                 </button>
               </div>
             </motion.div>
@@ -228,9 +228,10 @@ export default function ProductGrid() {
         })}
       </div>
 
+      {/* Product Detail Modal */}
       <ProductDetailModal
-        isOpen={Boolean(inspectProduct)}
         product={inspectProduct}
+        isOpen={inspectProduct !== null}
         onClose={() => setInspectProduct(null)}
       />
     </section>
