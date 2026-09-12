@@ -24,5 +24,21 @@ export default function manifest(): MetadataRoute.Manifest {
         type: "image/png",
       },
     ],
+    screenshots: [
+      {
+        src: "/products/look3.jpg",
+        sizes: "1920x1080",
+        type: "image/jpeg",
+        form_factor: "wide",
+        label: "SKELE Drop 001 Editorial Lookbook",
+      },
+      {
+        src: "/products/look1.jpg",
+        sizes: "1080x1440",
+        type: "image/jpeg",
+        form_factor: "narrow",
+        label: "SKELE Heavyweight Silhouette Preview",
+      },
+    ],
   };
 }
