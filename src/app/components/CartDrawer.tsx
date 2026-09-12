@@ -30,7 +30,6 @@ export default function CartDrawer() {
       <AnimatePresence>
         {isOpen && (
           <div className="fixed inset-0 z-[2000] flex justify-end">
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -39,7 +38,6 @@ export default function CartDrawer() {
               className="fixed inset-0 bg-black/80 backdrop-blur-sm"
             />
 
-            {/* Drawer Panel */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -64,7 +62,7 @@ export default function CartDrawer() {
                 </button>
               </div>
 
-              {/* Cart Items List */}
+              {/* Items List */}
               <div className="flex-1 overflow-y-auto p-5 space-y-4">
                 {cart.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center space-y-3 py-16">
@@ -85,7 +83,6 @@ export default function CartDrawer() {
                       key={`${item.id}-${item.size}`}
                       className="flex gap-4 p-3 bg-zinc-900/40 border border-zinc-900"
                     >
-                      {/* Thumbnail */}
                       <div className="relative w-16 h-20 bg-zinc-900 border border-zinc-800 flex-shrink-0 overflow-hidden">
                         {item.image ? (
                           <Image
@@ -102,7 +99,6 @@ export default function CartDrawer() {
                         )}
                       </div>
 
-                      {/* Content */}
                       <div className="flex-1 flex flex-col justify-between">
                         <div className="flex justify-between items-start gap-2">
                           <div>
@@ -123,7 +119,6 @@ export default function CartDrawer() {
                         </div>
 
                         <div className="flex justify-between items-end mt-3">
-                          {/* Quantity Adjuster */}
                           <div className="flex items-center border border-zinc-800">
                             <button
                               onClick={() =>
@@ -152,7 +147,6 @@ export default function CartDrawer() {
                             </button>
                           </div>
 
-                          {/* Price */}
                           <span className="text-xs font-mono font-semibold text-zinc-200">
                             ₹{(item.price * item.quantity).toLocaleString()}
                           </span>
@@ -163,7 +157,7 @@ export default function CartDrawer() {
                 )}
               </div>
 
-              {/* Footer / Checkout Button */}
+              {/* Footer */}
               {cart.length > 0 && (
                 <div className="p-5 border-t border-zinc-900 bg-zinc-950 space-y-4">
                   <div className="space-y-1.5 text-xs font-mono">
@@ -195,7 +189,6 @@ export default function CartDrawer() {
         )}
       </AnimatePresence>
 
-      {/* Render Checkout Modal */}
       <CheckoutModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}

@@ -52,7 +52,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div className="relative w-full max-w-lg bg-zinc-950 border border-zinc-800 p-6 md:p-8 text-white shadow-2xl">
         <button
           onClick={onClose}
@@ -100,7 +100,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="e.g. Alex Mercer"
+                  placeholder="e.g. Pradip Pawara"
                   className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-white transition-colors"
                 />
               </div>
@@ -115,7 +115,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+91 98765 43210"
+                  placeholder="+91 98196 60453"
                   className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-white transition-colors"
                 />
               </div>
