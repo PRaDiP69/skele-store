@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "SKELE APPARELS",
   "short_name": "SKELE",
   "description": "Heavyweight 280+ GSM luxury streetwear. Drop 001 Capsule.",
@@ -10,13 +11,15 @@
   "icons": [
     {
       "src": "/products/Hooked.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/products/Hooked.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

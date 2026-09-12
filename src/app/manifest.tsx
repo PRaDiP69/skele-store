@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "/",
     name: "SKELE APPARELS",
     short_name: "SKELE",
     description:
@@ -14,13 +15,15 @@ export default function manifest(): MetadataRoute.Manifest {
     icons: [
       {
         src: "/products/Hooked.png",
-        sizes: "192x192",
+        sizes: "any",
         type: "image/png",
+        purpose: "maskable",
       },
       {
         src: "/products/Hooked.png",
-        sizes: "512x512",
+        sizes: "any",
         type: "image/png",
+        purpose: "any",
       },
     ],
   };
