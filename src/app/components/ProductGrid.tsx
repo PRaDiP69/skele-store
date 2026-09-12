@@ -17,9 +17,8 @@ const PRODUCTS: ProductDetailItem[] = [
     color: "Blood Crimson",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/red-flag.png",
-    inStock: true, // <--- ADD THIS LINE
+    inStock: true,
   },
-
   {
     id: "prod-hooked",
     name: "Hooked",
@@ -29,7 +28,7 @@ const PRODUCTS: ProductDetailItem[] = [
     color: "Onyx Black",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/Hooked.png",
-    inStock: true, // <--- ADD THIS LINE
+    inStock: true,
   },
   {
     id: "prod-done-playing-blue",
@@ -40,18 +39,18 @@ const PRODUCTS: ProductDetailItem[] = [
     color: "Cobalt Blue",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/done-playing-blue.png",
-    inStock: true, // <--- ADD THIS LINE
+    inStock: true,
   },
   {
     id: "prod-ulterior-motive-green",
     name: "Ulterior Motive",
-    price: 2799,
-    displayPrice: "₹2,799",
+    price: 2899,
+    displayPrice: "₹2,899",
     tag: "Limited",
     color: "Forest Green",
     sizes: ["S", "M", "L", "XL"],
     image: "/products/Ulterior-motive-green.png",
-    inStock: true, // <--- ADD THIS LINE
+    inStock: true,
   },
   {
     id: "prod-transcend",
@@ -63,6 +62,7 @@ const PRODUCTS: ProductDetailItem[] = [
     sizes: ["S", "M", "L", "XL"],
     image: "/products/transcend.png",
     soldOutSizes: ["XL"],
+    inStock: true,
   },
   {
     id: "prod-disaster-black",
@@ -78,7 +78,7 @@ const PRODUCTS: ProductDetailItem[] = [
 ];
 
 export default function ProductGrid() {
- const { addToCart, openCart } = useCart();
+  const { addToCart, openCart } = useCart();
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({
     "prod-red-flag": "M",
     "prod-hooked": "M",
@@ -124,122 +124,108 @@ export default function ProductGrid() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {PRODUCTS.map((product, idx) => (
-          <motion.div
-            key={product.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: idx * 0.08 }}
-            className="group flex flex-col justify-between border border-zinc-900 bg-zinc-950/40 p-4"
-          >
-            <div>
-              <div
-                onClick={() => setInspectProduct(product)}
-                className="aspect-[3/4] bg-zinc-900/60 border border-zinc-800/80 relative overflow-hidden flex items-center justify-center mb-4 cursor-pointer"
-              >
-                {product.image ? (
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    
-                  />
-                  
-                ) : (
-                  <span className="text-zinc-700 font-bold uppercase tracking-widest text-xs text-center">
-                    [ {product.name} ]
-                  </span>
-                )}
+        {PRODUCTS.map((product, idx) => {
+          const isSoldOut = product.inStock === false;
 
-                <span className="absolute top-3 left-3 z-10 text-[10px] uppercase tracking-widest font-semibold px-2 py-0.5 border border-zinc-800 bg-black/80 text-zinc-300">
-                  {product.tag}
-                </span>
-
-                <span className="absolute bottom-3 right-3 z-10 p-1.5 bg-black/70 border border-zinc-800 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Maximize2 className="w-3.5 h-3.5" />
-                </span>
-            <div className="...">
-  <Image
-    src={product.image}
-    alt={product.name}
-    fill
-    className={`object-cover transition-transform duration-500 group-hover:scale-105 ${
-      product.inStock === false ? "grayscale opacity-40" : ""
-    }`}
-  />
-
-  {/* YOUR EXISTING SPAN TAG - KEEP AS IS */}
-  <span className="...">
-    {product.tag}
-  </span>
-
-  {/* NEW: ARCHIVED / SOLD OUT OVERLAY */}
-  {product.inStock === false && (
-    <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">
-      <span className="border border-white/40 px-3 py-1 text-[10px] font-mono tracking-widest uppercase text-white bg-black">
-        [ ARCHIVE // SOLD OUT ]
-      </span>
-    </div>
-  )}
-</div>
-          
-              </div>
-
-              <div className="flex justify-between items-start">
-                <div onClick={() => setInspectProduct(product)} className="cursor-pointer">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-white group-hover:text-zinc-300 transition-colors">
-                    {product.name}
-                  </h3>
-                  <p className="text-[11px] text-zinc-500 uppercase tracking-widest mt-0.5">
-                    {product.color}
-                  </p>
-                </div>
-                <span className="text-xs font-mono font-semibold text-zinc-200">
-                  {product.displayPrice}
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-zinc-900 space-y-3">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {product.sizes.map((size) => {
-                  const isSelected = selectedSizes[product.id] === size;
-                  return (
-                    <button
-                    
-                      key={size}
-                      onClick={() => handleSelectSize(product.id, size)}
-                      className={`px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase transition-colors border ${
-                        isSelected
-                          ? "border-white bg-white text-black"
-                          : "border-zinc-800 text-zinc-400 hover:border-zinc-600"
+          return (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.08 }}
+              className="group flex flex-col justify-between border border-zinc-900 bg-zinc-950/40 p-4"
+            >
+              <div>
+                {/* Image Container */}
+                <div
+                  onClick={() => setInspectProduct(product)}
+                  className="aspect-[3/4] bg-zinc-900/60 border border-zinc-800/80 relative overflow-hidden flex items-center justify-center mb-4 cursor-pointer"
+                >
+                  {product.image ? (
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className={`object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
+                        isSoldOut ? "grayscale opacity-40" : ""
                       }`}
-                    >
-                      {size}
-                      
-                    </button>
-                  );
-                })}
+                    />
+                  ) : (
+                    <span className="text-zinc-700 font-bold uppercase tracking-widest text-xs text-center">
+                      [ {product.name} ]
+                    </span>
+                  )}
+
+                  {/* Badge */}
+                  <span className="absolute top-3 left-3 z-10 text-[10px] uppercase tracking-widest font-semibold px-2 py-0.5 border border-zinc-800 bg-black/80 text-zinc-300">
+                    {isSoldOut ? "ARCHIVED" : product.tag}
+                  </span>
+
+                  {/* Expand Icon */}
+                  <span className="absolute bottom-3 right-3 z-10 p-1.5 bg-black/70 border border-zinc-800 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Maximize2 className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+
+                {/* Info */}
+                <div className="flex justify-between items-start">
+                  <div onClick={() => setInspectProduct(product)} className="cursor-pointer">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-white group-hover:text-zinc-300 transition-colors">
+                      {product.name}
+                    </h3>
+                    <p className="text-[11px] text-zinc-500 uppercase tracking-widest mt-0.5">
+                      {product.color}
+                    </p>
+                  </div>
+                  <span className="text-xs font-mono font-semibold text-zinc-200">
+                    {product.displayPrice}
+                  </span>
+                </div>
               </div>
 
-             <button
-  disabled={product.inStock === false}
-  onClick={() => handleAddToCart(product)}
-  className={`w-full py-2.5 text-xs font-mono tracking-widest uppercase transition-all ${
-    product.inStock === false
-      ? "bg-neutral-900 text-neutral-600 border border-neutral-800 cursor-not-allowed pointer-events-none"
-      : "bg-white text-black hover:bg-neutral-200 cursor-pointer"
-  }`}
->
-  {product.inStock === false ? "VAULTED // SOLD OUT" : "ACQUIRE // QUICK ADD"}
-</button>
-            </div>
-          </motion.div>
-        ))}
+              {/* Sizes & Action Button */}
+              <div className="mt-6 pt-4 border-t border-zinc-900 space-y-3">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {product.sizes.map((size) => {
+                    const isSelected = selectedSizes[product.id] === size;
+                    const isSizeUnavailable = isSoldOut || (product.soldOutSizes?.includes(size) ?? false);
+
+                    return (
+                      <button
+                        key={size}
+                        disabled={isSizeUnavailable}
+                        onClick={() => handleSelectSize(product.id, size)}
+                        className={`px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase transition-colors border ${
+                          isSizeUnavailable
+                            ? "border-zinc-900 text-zinc-700 cursor-not-allowed line-through"
+                            : isSelected
+                            ? "border-white bg-white text-black cursor-pointer"
+                            : "border-zinc-800 text-zinc-400 hover:border-zinc-600 cursor-pointer"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  disabled={isSoldOut}
+                  onClick={() => handleAddToCart(product)}
+                  className={`w-full py-2.5 text-xs font-mono tracking-widest uppercase transition-all ${
+                    isSoldOut
+                      ? "bg-zinc-900 text-zinc-600 border border-zinc-800 cursor-not-allowed"
+                      : "bg-white text-black hover:bg-zinc-200 cursor-pointer"
+                  }`}
+                >
+                  {isSoldOut ? "VAULTED // SOLD OUT" : "ACQUIRE // QUICK ADD"}
+                </button>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       <ProductDetailModal
